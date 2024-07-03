@@ -1,14 +1,21 @@
 #include<iostream>
 #include<fstream>
+#include"func.cpp"
+#include"Files.h"
 using namespace std;
-
-
 int main()
 {
-	cout << " 欢迎使用交通资讯系统" << endl;
+	while (true)    //主函数一直循环
+	{
+
+		menu1();
 
 
 
 
+
+
+
+	}
 	return 0;
 }
