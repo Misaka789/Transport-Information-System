@@ -1,4 +1,6 @@
 ﻿  Line.cpp
+D:\project\交通咨询系统\Line.cpp(24,6): warning C4101: “type_”: 未引用的局部变量
+D:\project\交通咨询系统\Line.cpp(23,8): warning C4101: “spend_m”: 未引用的局部变量
   main.cpp
   正在生成代码...
-  交通咨询系统.vcxproj -> D:\project\交通咨询系统\x64\Debug\交通咨询系统.exe
+D:\project\交通咨询系统\Line.cpp(29): error C4716: “ReadFile”: 必须返回一个值

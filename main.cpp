@@ -15,7 +15,7 @@ int main()
         case 0:
             return false;   //输入0退出循环
         case 1:
-            AddLine();   //增加线路函数
+            AddLine1();   //增加线路函数
             break;
         case 2:
             ModefyLine();    //修改线路函数
