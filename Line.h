@@ -31,8 +31,9 @@ public:
 };
 
 
-struct Lnode {                      // 线路信息，作为边表的元素
+class Lnode {                      // 线路信息，作为边表的元素
 
+public:
     Lnode(const string scn, const string ecn, const Time st, const Time et, const Time spend_t,
         const float spend_m, const string amt,const int type_ )
         : start_city_name(scn), end_city_name(ecn),
@@ -58,12 +59,15 @@ struct Lnode {                      // 线路信息，作为边表的元素
     Lnode* next;
 };
 
-struct Vnode {                           // 顶点表中的头结点，存储始发站的信息
-
+class Vnode {                           // 顶点表中的头结点，存储始发站的信息
+public:
     Vnode(string scn):start_city_name(scn),nextV(NULL),nextL(NULL){}
     string start_city_name;  // 头结点只包含始发地名
     Vnode* nextV;Lnode *nextL;
 };
+
+
+
 
 Vnode* ReadFile();
 void MainMenu();
