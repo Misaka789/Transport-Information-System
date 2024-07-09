@@ -35,6 +35,40 @@ ostream& operator <<(ostream& out, Time& time)
 	return out;
 }
 
+bool is_exist(string amt)
+{
+	Vnode* tV = ReadFile();
+	while (tV != NULL)
+	{
+		Lnode* tL = tV->nextL;
+		while (tL != NULL)
+		{
+			if (tL->amount == amt)
+				return true;
+
+			tL = tL->next;
+		}
+		tV = tV->nextV;
+	}
+	return false;
+}
+
+Vnode* Catch_amt(string amt)    //根据班次号查找，返回对应的起始城市
+{
+	Vnode* tV = ReadFile();
+	while (tV != NULL)
+	{
+		Lnode* tL = tV->nextL;
+		while (tL != NULL)
+		{
+			if (tL->amount == amt)
+				return tV;
+			tL = tL->next;
+		}
+		tV = tV->nextV;
+	}
+}
+
 Vnode* ReadFile()    //将文件中的信息读取并建立邻接表
 {
 	ifstream ifs(File);
@@ -85,21 +119,102 @@ Vnode* ReadFile()    //将文件中的信息读取并建立邻接表
 			rearV->nextL = tempL;
 		}
 	}
+	ifs.close();
 	return root;   //返回邻接表的头结点
+}      //从文件读入数据存入邻接表
+
+void Save_to_File(Vnode* r)  //将邻接表信息存入文件
+{
+	ofstream ofs(File);
+	Vnode* Vt = r;
+	while (Vt != NULL)
+	{
+		Lnode* Lt = Vt->nextL;
+		while (Lt != NULL)
+		{
+			ofs << left << setw(10) << setfill(' ') << Lt->start_city_name
+				<< left << setw(10) << Lt->end_city_name << Lt->amount << "\t" << Lt->start_time
+				<< " \t" << Lt->end_time << " \t" << Lt->spend_time << " \t" << Lt->spend_money << " \t" << Lt->type << endl;
+			Lt = Lt->next;
+		}
+		Vt = Vt->nextV;
+	}
+	ofs.close();
 }
 
 void AddLine(int type_)
 {
-	
+	Vnode* r = ReadFile();
+	string scn, ecn, amt;
+	Time st, et, spend_t;
+	float spend_m;
+	cout << "起始城市:" << endl;
+	cin >> scn;
+	cout << "目的城市:" << endl;
+	cin >> ecn;
+	cout << "班次:" << endl;
+	cin >> amt;
+	if (is_exist(amt)) {
+		cout << "\u001b[31merror:" << "\u001b[0m"<<"该班次已存在，请重新输入!" << endl;
+		system("pause");
+		system("cls");
+			return;
+	}
+	cout << "出发时间(hour:minute,+day)" << endl;
+	cin >> st;
+	cout << "抵达时间(hour:minute,+day)" << endl;
+	cin >> et;
+	cout << "花费时间(hour:minute,+day)" << endl;
+	cin >> spend_t;
+	cout << "金钱花费" << endl;
+	cin >> spend_m;
+	Lnode* tempL = new Lnode(scn, ecn, st, et, spend_t, spend_m, amt, type_);
+	Vnode* to_find = r;
+	bool is_in = 0;   //判断是否进入循环
+	while (to_find != NULL)
+	{
+		if (to_find->start_city_name == scn)
+		{
+			is_in = 1;
+			Lnode* add_L = to_find->nextL;
+			if (add_L == NULL)
+			{
+				to_find->nextL = tempL;
+				break;
+			}
+			while (add_L->next != NULL)
+			{
+				add_L = add_L->next;
+			}
+			add_L->next = tempL;
+			break;
+		}
+		to_find = to_find->nextV;
+	}
+	//is_in==0 说明要新建一个顶点了
+	if (is_in == 0) {
+		Vnode* tempV = new Vnode(scn);
+		Vnode* rear = r;
+		while (rear->nextV != NULL)
+		{
+			rear = rear->nextV;
+		}
+		rear->nextV = tempV;
+		tempV->nextL = tempL;
+	}
+	Save_to_File(r);
 } 
 
 void AddLine1()
 {
 	Vnode* r = ReadFile();
 	int type_;
+	cout << "请选择需要加入的线路类型(1:航班；0:列车)" << endl;
 	cin >> type_;
 	AddLine(type_);
-	cout << "已添加";
+	cout << "已添加" << endl;
+	system("pause");
+	system("cls");
 }
 
 void DispAllLines()
@@ -123,19 +238,45 @@ void DispAllLines()
 	system("cls");
 }
 
-
-
-
-
-
-
 void ModefyLine()
 {
+	Vnode* r = ReadFile();
+	cout << "请输入要修改的班次(唯一):" << endl;
+	string amt;
+	cin >> amt;
+	if (!is_exist(amt))
+	{
+		cout << "\u001b[31merror:" << "\u001b[0m" << "该班次不存在，请重新输入!" << endl;
+		system("pause");
+		system("cls");
+		return;
+	}
+	system("cls");
 
+
+	Save_to_File(r);
 }
 void DeleteLine()
 {
+	Vnode* r = ReadFile();
+	cout << "请输入要删除的班次(唯一):" << endl;
+	string amt;
+	cin >> amt;
+	if (!is_exist(amt))
+	{
+		cout << "\u001b[31merror:" << "\u001b[0m" << "该班次不存在，请重新输入!" << endl;
+		system("pause");
+		system("cls");
+		return;
+	}
+	Vnode* to_deleteV = Catch_amt(amt);   //拿到要删除的起始城市
+	Lnode* to_deleteL = to_deleteV->nextL;
+	while (to_deleteL != NULL)
+	{
 
+	}
+
+	Save_to_File(r);
 }
 void BestLine()
 {

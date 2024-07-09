@@ -31,6 +31,9 @@ public:
 };
 
 
+
+
+
 class Lnode {                      // 线路信息，作为边表的元素
 
 public:
