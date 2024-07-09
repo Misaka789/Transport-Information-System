@@ -56,10 +56,12 @@ Vnode* ReadFile()    //将文件中的信息读取并建立邻接表
 		//Vnode* tempV = new Vnode(scn);   不一定需要新建一个节点因为可能原有链表中已经存在包含该起始点的结点
 		Lnode* tempL = new Lnode(scn, ecn, st, et, spend_t, spend_m, amt, type_);
 		Vnode* to_find = root;
+		bool is_in = 0;   //判断是否进入循环
 		while (to_find != NULL)
 		{
 			if (to_find->start_city_name == scn) 
 			{
+				is_in = 1;
 				Lnode* add_L=to_find->nextL;
 				if (add_L == NULL)
 				{
@@ -75,12 +77,13 @@ Vnode* ReadFile()    //将文件中的信息读取并建立邻接表
 			}
 			to_find = to_find->nextV;
 		}
-		//循环结束说明要新建一个顶点了
-		Vnode* tempV = new Vnode(scn);
-		rearV->nextV= tempV;
-		rearV = rearV->nextV;
-		rearV->nextL = tempL;
-		rearV->nextV = NULL;
+		//is_in==0 说明要新建一个顶点了
+		if (is_in == 0) {
+			Vnode* tempV = new Vnode(scn);
+			rearV->nextV = tempV;
+			rearV = rearV->nextV;
+			rearV->nextL = tempL;
+		}
 	}
 	return root;   //返回邻接表的头结点
 }
@@ -103,6 +106,7 @@ void DispAllLines()
 {
 	Vnode* r = ReadFile();
 	Vnode* Vt = r;
+	system("cls");
 	cout << "|" << "始发城市" << "|" << "终点城市" << "|" << "班次编号" << "|" << "始发时间" << "|" << "抵达时间" << "|" << "总计用时" << "|" << "总计花费" << "|" << "班次类别" << "|" << endl;
 	while (Vt != NULL)
 	{
@@ -115,6 +119,8 @@ void DispAllLines()
 		}
 		Vt = Vt->nextV;
 	}
+	system("pause");
+	system("cls");
 }
 
 
