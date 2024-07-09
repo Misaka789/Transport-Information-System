@@ -80,6 +80,7 @@ Vnode* ReadFile()    //将文件中的信息读取并建立邻接表
 		rearV->nextV= tempV;
 		rearV = rearV->nextV;
 		rearV->nextL = tempL;
+		rearV->nextV = NULL;
 	}
 	return root;   //返回邻接表的头结点
 }
