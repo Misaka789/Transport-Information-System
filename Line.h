@@ -65,6 +65,7 @@ public:
 class Vnode {                           // 顶点表中的头结点，存储始发站的信息
 public:
     Vnode(string scn):start_city_name(scn),nextV(NULL),nextL(NULL){}
+    Vnode(){}   //不做任何初始化便于创造哑结点
     string start_city_name;  // 头结点只包含始发地名
     Vnode* nextV;Lnode *nextL;
 };

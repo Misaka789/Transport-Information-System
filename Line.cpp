@@ -53,12 +53,12 @@ bool is_exist(string amt)
 	return false;
 }
 
-Vnode* Catch_amt(string amt)    //根据班次号查找，返回对应的起始城市
-{
+Vnode* Pre_Catch_amt(string amt)    //根据班次号查找，返回对应的起始城市的前一个城市
+{                                   //并且前提是一定能找到
 	Vnode* tV = ReadFile();
-	while (tV != NULL)
+	while (tV ->nextV!= NULL)
 	{
-		Lnode* tL = tV->nextL;
+		Lnode* tL = tV->nextV->nextL;
 		while (tL != NULL)
 		{
 			if (tL->amount == amt)
@@ -67,6 +67,10 @@ Vnode* Catch_amt(string amt)    //根据班次号查找，返回对应的起始城市
 		}
 		tV = tV->nextV;
 	}
+	//循环结束还未返回值说明头结点为所查找的结点，此时创建一个节点指向头结点便于删除的修改操作
+	Vnode* Pre_Vnode = new Vnode();
+	Pre_Vnode->nextV = ReadFile();
+	return Pre_Vnode;
 }
 
 Vnode* ReadFile()    //将文件中的信息读取并建立邻接表
@@ -251,11 +255,43 @@ void ModefyLine()
 		system("cls");
 		return;
 	}
-	system("cls");
-
-
+	Vnode* to_ModefyV=Pre_Catch_amt(amt);
+	string scn, ecn;
+	Time st, et, spend_t;
+	float spend_m;
+	Lnode* to_ModefyL = to_ModefyV->nextL;
+	while (to_ModefyL != NULL)
+	{
+		if (to_ModefyL->amount == amt)
+		{
+			cout << "起始城市:" << endl;
+			cin >> scn;
+			cout << "目的城市:" << endl;
+			cin >> ecn;
+			cout << "出发时间(hour:minute,+day)" << endl;
+			cin >> st;
+			cout << "抵达时间(hour:minute,+day)" << endl;
+			cin >> et;
+			cout << "花费时间(hour:minute,+day)" << endl;
+			cin >> spend_t;
+			cout << "金钱花费" << endl;
+			cin >> spend_m;
+			to_ModefyL->start_city_name = scn;
+			to_ModefyL->end_city_name = ecn;
+			to_ModefyL->start_time = st;
+			to_ModefyL->end_time = et;
+			to_ModefyL->spend_time = spend_t;
+			to_ModefyL->spend_money = spend_m;
+			cout << "信息修改成功！" << endl;
+			system("pause");
+			system("clas");
+			break;
+		}
+		to_ModefyL = to_ModefyL->next;
+	}
 	Save_to_File(r);
 }
+
 void DeleteLine()
 {
 	Vnode* r = ReadFile();
@@ -269,13 +305,36 @@ void DeleteLine()
 		system("cls");
 		return;
 	}
-	Vnode* to_deleteV = Catch_amt(amt);   //拿到要删除的起始城市
-	Lnode* to_deleteL = to_deleteV->nextL;
-	while (to_deleteL != NULL)
+	Vnode* Pre_to_deleteV = Pre_Catch_amt(amt);
+	Vnode* to_deleteV = Pre_to_deleteV->nextV;   //拿到要删除的起始城市的前一个城市
+	Lnode* Pre_to_deleteL = to_deleteV->nextL;
+	if (Pre_to_deleteL->amount == amt)
 	{
-
+		to_deleteV->nextL = Pre_to_deleteL->next;
+		//delete Pre_to_deleteL;
 	}
 
+	//DispAllLines();
+
+	while (Pre_to_deleteL ->next!= NULL)
+	{
+		if (Pre_to_deleteL->next->amount == amt)
+		{
+			Pre_to_deleteL->next = Pre_to_deleteL->next->next;
+			//delete Pre_to_deleteL->next;
+			break;
+		}
+		Pre_to_deleteL = Pre_to_deleteL->next;
+	}
+    //如果被删除的头结点之后没有了边结点，那么该头结点也要被删除
+	if (to_deleteV->nextL == NULL)
+	{
+		Pre_to_deleteV->nextV = Pre_to_deleteV->nextV->nextV;
+		//delete Pre_to_deleteV->nextV;
+	}
+	cout << "删除成功！" << endl;
+	system("pause");
+	system("cls");
 	Save_to_File(r);
 }
 void BestLine()
