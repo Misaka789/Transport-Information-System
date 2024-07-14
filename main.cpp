@@ -40,7 +40,7 @@ bool CheckU()
     cin >> id;
     cout << " ÇëÊäÈëÃÜÂë:" << endl;
     cin >> pwd;
-    ifstream ifs_U(User_F);
+    ifstream ifs_U(Users_F);
     while (ifs_U>> id_ >> pwd_)
     {
         if (id == id_ && pwd == pwd_)
@@ -100,7 +100,7 @@ int main()
                     }
                     case 5:
                     {
-
+                        manager.Modefy();
                         break;
                     }
                     }
@@ -121,6 +121,7 @@ int main()
                 user.Menu();
                 int choice;
                 cin >> choice;
+                Lines line;
                 switch (choice)
                 {
                 case 0:return 0;
@@ -133,7 +134,11 @@ int main()
                 system("cls");
             }
         }
-        
+        else // (choice1 == 3)
+        {
+            Manager m;
+            m.Register();
+        }
     }
     return 0;
 }

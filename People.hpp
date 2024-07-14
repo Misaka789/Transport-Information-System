@@ -1,9 +1,8 @@
 #pragma once
 #include<iostream>
-#define Users_F "Users"
+#define Users_F "Users.txt"
 #include<fstream>
 #include<vector>
-//#include"Line.h"
 using namespace std;
 class People
 {
@@ -13,6 +12,19 @@ public :
 	People(){}
 	People(string id_, string pwd_) :id(id_), pwd(pwd_) {}
 	//Lines lines;
+};
+
+class User : public People
+{
+public:
+	void Menu()
+	{
+		cout << "\t" << "登陆成功" << endl;
+		cout << "\t" << "1.对两地做出最优决策(最短时间 & 最小开销)" << endl;
+		cout << "\t" << "0.退出程序" << endl;
+	}
+	User(string id_, string pwd_) :People(id_, pwd_) {}
+	User() {}
 };
 
 class Manager :public People
@@ -26,6 +38,7 @@ public:
 		cout << "\t" << "2.添加城市及相关路线" << endl;
 		cout << "\t" << "3.修改相关路线" << endl;
 		cout << "\t" << "4.删除相关路线" << endl;
+		cout << "\t" << "5.修改用户密码" << endl;
 		cout << "\t" << "0.退出程序" << endl;
 	}
 	Manager()
@@ -45,6 +58,8 @@ public:
 	void Modefy();  //修改密码
 
 	void SaveToFile();
+
+	void Register();
 };
 
 void Manager::SaveToFile()
@@ -100,14 +115,38 @@ void Manager::Modefy()
 	}
 }
 
-class User : public People
+void Manager::Register()
 {
-public:
-	void Menu()
+	cout << "输入用户名:" << endl;
+	string id_;
+	cin >> id_;
+	for (auto it = users.begin(); it != users.end(); it++)
 	{
-		cout << "\t" << "1.对两地做出最优决策(最短时间 & 最小开销)" << endl;
-		cout << "\t" << "0.退出程序" << endl;
+		if (it->id == id_)
+		{
+			cout << "\u001b[31merror:" << "\u001b[0m" << "用户名已存在，请重新输入:" << endl;
+			system("pause");
+			system("cls");
+			return;
+		}
 	}
-	User(string id_,string pwd_):People(id_,pwd_){}
-	void Login();
-};
+	cout << "输入密码:" << endl;
+	string pwd1, pwd2;
+	cin >> pwd1;
+	cout << "再次确认密码:" << endl;
+	cin >> pwd2;
+	if (pwd1 != pwd2)
+	{
+		cout << "\u001b[31merror:" << "\u001b[0m" << "两次密码不一致，请重新输入!" << endl;
+		system("pause");
+		system("cls");
+		return;
+	}
+	User u(id_, pwd1);
+	users.push_back(u);
+	SaveToFile();
+	cout << "账号注册完成，请返回登录" << endl;
+	system("pause");
+	system("cls");
+}
+

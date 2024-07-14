@@ -3,12 +3,14 @@
 #include<vector>
 #include<algorithm>
 #include<string>
+#include<map>
+#include<queue>
 //#include"People.h"
 #define Manager_F "Manager.txt"
 #define User_F "User.txt"
 #define Cities_F "Cities.txt"
 #define Lines_F "Lines.txt"
-
+#define INF 99999
 class Time {
     //时间格式: hour:minute,+day
 public:
@@ -101,7 +103,15 @@ public:
     void Disp() ;
     bool is_exist(string amt);
     void ModefyLine();
-    Lines() { graph = ReadFromFile(); }
+    void BestLine_m(string scn, string ecn);
+    Lines() 
+    {
+        graph = ReadFromFile(); 
+        for (auto it = graph.begin(); it != graph.end(); it++)
+        {
+            Cities.push_back(it->start_city_name);
+        }
+    }
 
 };
 bool Lines::is_exist(string amt)
@@ -362,4 +372,48 @@ void Lines::ModefyLine()
     cout << "修改完成" << endl;
     system("pause");
     system("cls");
+}
+
+struct cmp
+{
+    bool operator()(const Node& a, const Node& b) const
+    {
+        return a.spend_money < b.spend_money; // 小根堆，spend_money小的优先级高,便于优先队列的比较
+    }
+};
+
+
+void Lines::BestLine_m(string scn,string ecn)   //最小花费
+{
+    map<string,bool> visited;
+    map<string, string > path;
+    priority_queue<Node, vector<Node>, cmp> pq;
+    map<string, int> spend;
+    auto it = graph.begin();
+    for (; it != graph.end(); it++)
+        if (it->start_city_name == scn)
+            break;
+    //it拿到起点节点
+    spend[it->start_city_name] = 0;
+    visited[it->start_city_name] = true;
+    Node* temp = it->next;
+    while (temp != NULL)
+    {
+        pq.push(*temp);
+        temp = temp->next;
+    }
+    while (!pq.empty())
+    {
+        Node t = pq.top();
+        if (visited[t.end_city_name] != true) 
+        {
+            path[t.end_city_name] = t.start_city_name;
+            spend[t.end_city_name] = spend[t.start_city_name] + t.spend_money;
+            path[t.end_city_name] = t.start_city_name;
+            visited[t.end_city_name] = true;
+        }
+        pq.pop();
+    }
+    cout << "从" << scn << "到" << ecn << "花费最少的路线为:" << endl;
+    //while()
 }
