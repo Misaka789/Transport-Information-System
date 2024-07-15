@@ -125,6 +125,16 @@ int main()
                 switch (choice)
                 {
                 case 0:return 0;
+                case 1:
+                {
+                    string scn, ecn;
+                    cout << "起点城市:";
+                    cin >> scn;
+                    cout << "终点城市:";
+                    cin >> ecn;
+                    line.BestLine_m(scn, ecn);
+                    break;
+                }
                 }
             }
             else

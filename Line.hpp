@@ -20,16 +20,16 @@ public:
     Time(const int h = 0, const int min = 0, const int d = 0) : hour(h), minute(min), day(d) {}  // 构造函数
     Time(const Time& obj) : hour(obj.hour), minute(obj.minute), day(obj.day) {}  //复制构造函数
 
-    void swap_(Time& lt, Time& rt) {
-        swap(lt.day, rt.day);
-        swap(lt.hour, rt.hour);
-        swap(lt.minute, rt.minute);
-    }
+    
     Time& operator = (Time robj) {
         swap(*this, robj);
         return *this;
     }  //重载等于号
-
+    bool operator <(Time& a)
+    {
+        return this->getTotalMintue() < a.getTotalMintue();
+    }
+    Time& operator -(Time& a);
     int getTotalMintue() const {
         return this->day * 1440 + this->hour * 60 + this->minute;   //返回总共需要的分钟数
     }
@@ -55,7 +55,7 @@ ostream& operator <<(ostream& out, Time& time)
     out << right << setw(2) << setfill('0') << time.hour << ":" << right << setw(2) << setfill('0') << time.minute << ",+" << right << setw(2) << setfill('0') << time.day;
     return out;
 }
-struct Node
+class Node
 {
 public:
     Node(const string scn, const string ecn, const Time st, const Time et, const Time spend_t,
@@ -82,7 +82,7 @@ public:
     Node* next;
 };
 
-struct Vnode 
+class Vnode 
 {
 public:
     Node* next;
@@ -400,7 +400,7 @@ void Lines::BestLine_m(string scn,string ecn)   //最小花费
     while (temp != NULL)
     {
         pq.push(*temp);
-        temp = temp->next;
+        temp = temp->next; 
     }
     while (!pq.empty())
     {
@@ -415,5 +415,13 @@ void Lines::BestLine_m(string scn,string ecn)   //最小花费
         pq.pop();
     }
     cout << "从" << scn << "到" << ecn << "花费最少的路线为:" << endl;
-    //while()
+    string str=path[ecn];
+    while (str!=scn)
+    {
+        cout << str << "->" << path[str];
+        str = path[str];
+    }
+    cout << "总花费为:" << spend[ecn] << endl;
+    system("pause");
+    system("cls");
 }
