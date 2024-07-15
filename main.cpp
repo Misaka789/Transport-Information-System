@@ -118,6 +118,7 @@ int main()
             if (CheckU())
             {
                 User user;
+                system("cls");
                 user.Menu();
                 int choice;
                 cin >> choice;

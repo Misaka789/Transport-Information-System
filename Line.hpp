@@ -382,45 +382,94 @@ struct cmp
     }
 };
 
+struct QNode
+{
+    string city;
+    int money;
+    QNode(string c,int s):city(c),money(s){}
+
+    bool operator < (const QNode& s)const
+    {
+        return money > s.money;
+    }
+};
 
 void Lines::BestLine_m(string scn,string ecn)   //最小花费
 {
     map<string,bool> visited;
     map<string, string > path;
-    priority_queue<Node, vector<Node>, cmp> pq;
+    priority_queue<QNode> pq;
     map<string, int> spend;
     auto it = graph.begin();
     for (; it != graph.end(); it++)
-        if (it->start_city_name == scn)
+        if (it->start_city_name == scn) //it拿到起点节点
             break;
-    //it拿到起点节点
-    spend[it->start_city_name] = 0;
+    /*spend[it->start_city_name] = 0;
+    visited[it->start_city_name] = true;*/
     visited[it->start_city_name] = true;
     Node* temp = it->next;
-    while (temp != NULL)
+    for (auto it = Cities.begin(); it!= Cities.end(); it++)
     {
-        pq.push(*temp);
-        temp = temp->next; 
+        spend[*it] = INF;
+        visited.insert(make_pair(*it, false));
     }
-    while (!pq.empty())
+   /* for (auto c : visited)
     {
-        Node t = pq.top();
-        if (visited[t.end_city_name] != true) 
+        cout << c.first << " :" << c.second << endl;
+    }*/
+   
+    /*while (temp != NULL)
+    {
+        spend[temp->end_city_name] = temp->spend_money;
+        temp = temp->next; 
+    }*/
+    spend[scn] = 0;
+    /*for (auto c : spend)
+    {
+        cout << c.first << " :" << c.second << endl;
+    }*/
+    pq.push(QNode(scn, 0));
+    //初始化spend数组
+    //int mindis = INF;
+    for(int i=0;i<Cities.size();i++)
+    {
+        QNode t = pq.top(); pq.pop();
+        string u = t.city;
+        visited[u] = true;
+        auto it = graph.begin();
+        for (; it != graph.end(); it++)
+            if (it->start_city_name == u)   //it拿到起点节点5
+                break;
+        Node* p = it->next;
+        while (p != NULL)
         {
-            path[t.end_city_name] = t.start_city_name;
-            spend[t.end_city_name] = spend[t.start_city_name] + t.spend_money;
-            path[t.end_city_name] = t.start_city_name;
-            visited[t.end_city_name] = true;
+            string w = p->end_city_name;
+            /*cout << visited[w] << " ";
+            cout << w << " " << spend[w] << " " << spend[u] + p->spend_money;*/
+            if (visited[w] == 0 && spend[w] > spend[u] + p->spend_money)
+            {
+                spend[w] = spend[u] + p->spend_money;
+                pq.push(QNode(w, spend[w]));
+                path[w] = u;
+            }
+            p = p->next;
         }
-        pq.pop();
     }
     cout << "从" << scn << "到" << ecn << "花费最少的路线为:" << endl;
     string str=path[ecn];
+    vector<string> p;
+    p.push_back(ecn);
     while (str!=scn)
     {
-        cout << str << "->" << path[str];
+        p.push_back(str);
         str = path[str];
     }
+    p.push_back(scn);
+    for (auto it = p.end() - 1; it != p.begin(); it--)
+    {
+        cout << *it << "->";
+    }
+    cout  << *(p.begin()) << endl;
     cout << "总花费为:" << spend[ecn] << endl;
     system("pause");
     system("cls");
