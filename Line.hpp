@@ -11,6 +11,7 @@
 #define Cities_F "Cities.txt"
 #define Lines_F "Lines.txt"
 #define INF 99999
+#define INF_T 99:99,+0
 class Time {
     //时间格式: hour:minute,+day
 public:
@@ -19,23 +20,42 @@ public:
     int day;
     Time(const int h = 0, const int min = 0, const int d = 0) : hour(h), minute(min), day(d) {}  // 构造函数
     Time(const Time& obj) : hour(obj.hour), minute(obj.minute), day(obj.day) {}  //复制构造函数
-
-    
-    Time& operator = (Time robj) {
-        swap(*this, robj);
-        return *this;
-    }  //重载等于号
     bool operator <(Time& a)
     {
         return this->getTotalMintue() < a.getTotalMintue();
+    }
+    bool operator >(Time& a)
+    {
+        return this->getTotalMintue() > a.getTotalMintue();
     }
     Time& operator -(Time& a);
     int getTotalMintue() const {
         return this->day * 1440 + this->hour * 60 + this->minute;   //返回总共需要的分钟数
     }
+
+    Time& operator +(Time& a);
     friend istream& operator >> (istream& in, Time& time);//声明为友元函数
     friend ostream& operator <<(ostream& out, Time& time);
 };
+
+Time& Time::operator +(Time& a)
+{
+    Time t;
+    t.minute = this->minute + a.minute;
+    t.hour = this->hour + a.hour;
+    t.day = this->day + a.day;
+    if (t.minute > 60)
+    {
+        t.minute - 60;
+        t.hour++;
+    }
+    if (t.hour > 24)
+    {
+        t.hour - 24;
+        t.day++;
+    }
+    return t;
+}
 
 Time& Time::operator -(Time& a)
 {
@@ -45,13 +65,13 @@ Time& Time::operator -(Time& a)
     if (this->minute < a.minute)
     {
         t.minute = this->minute + 60 - a.minute;
-        t.hour--;
+        this->hour--;
     }
     else t.minute = this->minute - a.minute;
     if(this->hour < a.hour)
     {
         t.hour = this->hour + 12 - a.hour;
-        t.day--;
+        this->day--;
     }
     else t.hour = this->hour - a.hour;
     t.day = this->day - a.day;
@@ -257,8 +277,8 @@ void Lines::AddLine()
     cin >> st;
     cout << "抵达时间(hour:minute,+day)" << endl;
     cin >> et;
-    cout << "花费时间(hour:minute,+day)" << endl;
-    cin >> spend_t;
+    //cout << "花费时间(hour:minute,+day)" << endl;
+     spend_t=et-st;
     cout << "金钱花费" << endl;
     cin >> spend_m;
     cout << "班次类别(1:航班;0:列车):" << endl;
@@ -383,8 +403,8 @@ void Lines::ModefyLine()
     cin >> L->start_time;
     cout << "抵达时间(hour:minute,+day)" << endl;
     cin >> L->end_time;
-    cout << "花费时间(hour:minute,+day)" << endl;
-    cin >> L->spend_time;
+    //cout << "花费时间(hour:minute,+day)" << endl;
+     L->spend_time=L->end_time-L->start_time;
     cout << "金钱花费" << endl;
     cin >> L->spend_money;
     cout << "班次类别:" << endl;
@@ -415,6 +435,17 @@ struct QNode
     }
 };
 
+struct QNode_t
+{
+    string city;
+    Time time;
+    QNode_t(string c, Time t) :city(c), time(t) {}
+
+    bool operator < (const QNode_t& s) const
+    {
+        return  time.getTotalMintue() > s.time.getTotalMintue();
+    }
+};
 void Lines::BestLine_m(string scn,string ecn)   //最小花费
 {
     map<string,bool> visited;
@@ -500,10 +531,85 @@ void Lines::BestLine_m(string scn,string ecn)   //最小花费
     system("pause");
     system("cls");
 }
+
 void Lines::BestLine_t(string scn, string ecn)
 {
+    map<string, bool> visited;
+    map<string, string > path;
+    priority_queue<QNode_t> pq;
+    map<string, Time> spend;
+    auto it = graph.begin();
+    for (; it != graph.end(); it++)
+        if (it->start_city_name == scn) //it拿到起点节点
+            break;
+    visited[it->start_city_name] = true;
+    Node* temp = it->next;
+    for (auto it = Cities.begin(); it != Cities.end(); it++)
+    {
+        spend[*it] = Time(99,99,0);
+        visited.insert(make_pair(*it, false));
+    }
+    spend[scn] = Time(00,00,00);
+    pq.push(QNode_t(scn, Time(00, 00, 00)));  //初始化spend数组
 
-
+    for (int i = 0; i < Cities.size(); i++)
+    {
+        QNode_t t = pq.top(); pq.pop();
+        string u = t.city;
+        visited[u] = true;
+        auto it = graph.begin();
+        for (; it != graph.end(); it++)
+            if (it->start_city_name == u)   //it拿到起点节点
+                break;
+        Node* p = it->next;
+        while (p != NULL)
+        {
+            string w = p->end_city_name;
+            if (visited[w] == 0 && spend[w] > spend[u] + p->spend_time)
+            {
+                spend[w] = spend[u] + p->spend_time;
+                pq.push(QNode_t(w, spend[w]));
+                path[w] = u;
+            }
+            p = p->next;
+        }
+    }
+    cout << "从" << scn << "到" << ecn << "时间最短的路线为:" << endl;
+    string str = path[ecn];
+    vector<string> p;
+    p.push_back(ecn);
+    while (str != scn)
+    {
+        p.push_back(str);
+        str = path[str];
+    }
+    p.push_back(scn);
+    vector<Node> p2;
+    for (auto it = p.begin(); it != p.end() - 1; it++)
+    {
+        auto it2 = graph.begin();
+        while (it2 != graph.end())
+        {
+            if (it2->start_city_name == *(it + 1))break;
+            it2++;
+        }
+        Node* t = it2->next;
+        while (t->end_city_name != *(it))
+        {
+            t = t->next;
+        }
+        p2.push_back(*t);
+    }
+    for (auto it = p2.end() - 1; it != p2.begin(); it--)
+    {
+        it->DispNode(); cout << endl;
+    }
+    auto it2 = p2.begin();
+    auto it3 = p2.end() - 1;
+    Time spend_t = it2->end_time - it3->start_time;
+    it2->DispNode(); cout << endl;
+    cout << "总时间为:" << endl;
+    cout <<spend_t.day<<"天"<<spend_t.hour<<"时"<<spend_t.minute<<"分" << endl;
     system("pause");
     system("cls");
 }

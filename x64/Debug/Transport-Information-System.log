@@ -1,5 +1,13 @@
 ﻿  main.cpp
-D:\project\Transport-Information-System\Line.hpp(451,37): warning C4244: “=”: 从“float”转换到“int”，可能丢失数据
+D:\project\Transport-Information-System\Line.hpp(49,18): warning C4552: ”-“: 未使用表达式结果
   (编译源文件“main.cpp”)
   
+D:\project\Transport-Information-System\Line.hpp(54,16): warning C4552: ”-“: 未使用表达式结果
+  (编译源文件“main.cpp”)
+  
+D:\project\Transport-Information-System\Line.hpp(485,37): warning C4244: “=”: 从“float”转换到“int”，可能丢失数据
+  (编译源文件“main.cpp”)
+  
+D:\project\Transport-Information-System\Line.hpp(78): warning C4172: 返回局部变量或临时变量的地址: t
+D:\project\Transport-Information-System\Line.hpp(57): warning C4172: 返回局部变量或临时变量的地址: t
   Transport-Information-System.vcxproj -> D:\project\Transport-Information-System\x64\Debug\Transport-Information-System.exe

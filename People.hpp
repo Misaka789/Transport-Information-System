@@ -20,7 +20,8 @@ public:
 	void Menu()
 	{
 		cout << "\t" << "登陆成功" << endl;
-		cout << "\t" << "1.对两地做出最优决策(最短时间 & 最小开销)" << endl;
+		cout << "\t" << "1.对两地做出最优决策(最小开销)" << endl;
+		cout << "\t" << "2.最短时间" << endl;
 		cout << "\t" << "0.退出程序" << endl;
 	}
 	User(string id_, string pwd_) :People(id_, pwd_) {}

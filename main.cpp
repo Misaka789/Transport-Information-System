@@ -136,6 +136,16 @@ int main()
                     line.BestLine_m(scn, ecn);
                     break;
                 }
+                case 2:
+                {
+                    string scn, ecn;
+                    cout << "起点城市:";
+                    cin >> scn;
+                    cout << "终点城市:";
+                    cin >> ecn;
+                    line.BestLine_t(scn, ecn);
+                    break;
+                }
                 }
             }
             else
