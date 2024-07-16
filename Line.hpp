@@ -37,6 +37,26 @@ public:
     friend ostream& operator <<(ostream& out, Time& time);
 };
 
+Time& Time::operator -(Time& a)
+{
+    Time t;
+    if (*this < a)
+        throw "error:时间不能为负值";
+    if (this->minute < a.minute)
+    {
+        t.minute = this->minute + 60 - a.minute;
+        t.hour--;
+    }
+    else t.minute = this->minute - a.minute;
+    if(this->hour < a.hour)
+    {
+        t.hour = this->hour + 12 - a.hour;
+        t.day--;
+    }
+    else t.hour = this->hour - a.hour;
+    t.day = this->day - a.day;
+    return t;
+}
 
 istream& operator >> (istream& in, Time& time) {          //重载右移运算符简化输入
     char c1, c2, c3;
@@ -104,6 +124,7 @@ public:
     bool is_exist(string amt);
     void ModefyLine();
     void BestLine_m(string scn, string ecn);
+    void BestLine_t(string scn, string ecn);
     Lines() 
     {
         graph = ReadFromFile(); 
@@ -404,8 +425,6 @@ void Lines::BestLine_m(string scn,string ecn)   //最小花费
     for (; it != graph.end(); it++)
         if (it->start_city_name == scn) //it拿到起点节点
             break;
-    /*spend[it->start_city_name] = 0;
-    visited[it->start_city_name] = true;*/
     visited[it->start_city_name] = true;
     Node* temp = it->next;
     for (auto it = Cities.begin(); it!= Cities.end(); it++)
@@ -413,24 +432,10 @@ void Lines::BestLine_m(string scn,string ecn)   //最小花费
         spend[*it] = INF;
         visited.insert(make_pair(*it, false));
     }
-   /* for (auto c : visited)
-    {
-        cout << c.first << " :" << c.second << endl;
-    }*/
    
-    /*while (temp != NULL)
-    {
-        spend[temp->end_city_name] = temp->spend_money;
-        temp = temp->next; 
-    }*/
     spend[scn] = 0;
-    /*for (auto c : spend)
-    {
-        cout << c.first << " :" << c.second << endl;
-    }*/
-    pq.push(QNode(scn, 0));
-    //初始化spend数组
-    //int mindis = INF;
+   
+    pq.push(QNode(scn, 0));  //初始化spend数组
     for(int i=0;i<Cities.size();i++)
     {
         QNode t = pq.top(); pq.pop();
@@ -444,8 +449,6 @@ void Lines::BestLine_m(string scn,string ecn)   //最小花费
         while (p != NULL)
         {
             string w = p->end_city_name;
-            /*cout << visited[w] << " ";
-            cout << w << " " << spend[w] << " " << spend[u] + p->spend_money;*/
             if (visited[w] == 0 && spend[w] > spend[u] + p->spend_money)
             {
                 spend[w] = spend[u] + p->spend_money;
@@ -465,12 +468,42 @@ void Lines::BestLine_m(string scn,string ecn)   //最小花费
         str = path[str];
     }
     p.push_back(scn);
-    for (auto it = p.end() - 1; it != p.begin(); it--)
+    vector<Node> p2;
+    /*for (auto a : p)
     {
-        cout << *it << "->";
+        cout << a << " ";
+        cout << endl;
+    }*/
+    for (auto it = p.begin(); it != p.end()-1; it++)
+    {
+        auto it2 = graph.begin();
+        while (it2 != graph.end())
+        {
+            if (it2->start_city_name == *(it+1))break;
+            it2++;
+        }
+        Node* t = it2->next;
+        while (t->end_city_name != *(it))
+        {
+            t = t->next;
+        }
+        p2.push_back(*t);
     }
-    cout  << *(p.begin()) << endl;
-    cout << "总花费为:" << spend[ecn] << endl;
+    for (auto it = p2.end()-1; it != p2.begin(); it--)
+    {
+        it->DispNode(); cout << endl;
+    }
+    auto it2 = p2.begin();
+    it2->DispNode(); cout << endl;
+    cout << "总花费为:" << endl;
+    cout << spend[ecn]<<"(RMB)" << endl;
+    system("pause");
+    system("cls");
+}
+void Lines::BestLine_t(string scn, string ecn)
+{
+
+
     system("pause");
     system("cls");
 }
