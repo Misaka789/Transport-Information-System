@@ -480,6 +480,9 @@ void Lines::BestLine_m(string scn,string ecn)   //最小花费
         while (p != NULL)
         {
             string w = p->end_city_name;
+            /*cout << visited[w] << endl;
+            cout << spend[w] << endl;
+            cout << spend[u]+p->spend_money << endl;*/
             if (visited[w] == 0 && spend[w] > spend[u] + p->spend_money)
             {
                 spend[w] = spend[u] + p->spend_money;
@@ -606,10 +609,10 @@ void Lines::BestLine_t(string scn, string ecn)
     }
     auto it2 = p2.begin();
     auto it3 = p2.end() - 1;
-    Time spend_t = it2->end_time - it3->start_time;
     it2->DispNode(); cout << endl;
     cout << "总时间为:" << endl;
-    cout <<spend_t.day<<"天"<<spend_t.hour<<"时"<<spend_t.minute<<"分" << endl;
+    Time spend_t = it2->end_time - it3->start_time;
+    cout << (it2->end_time - it3->start_time).day << "天" << spend_t.hour << "时" << spend_t.minute << "分" << endl;
     system("pause");
     system("cls");
 }

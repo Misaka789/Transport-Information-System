@@ -77,7 +77,7 @@ int main()
                     switch (choice)
                     {
 
-                    case 0:return 0;
+                    case 0:break;
                     case 1:
                     {
                         line.Disp();
